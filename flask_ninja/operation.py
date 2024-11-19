@@ -69,6 +69,7 @@ class Operation:
         description: str = "",
         params: Optional[list[ModelField]] = None,
         auth: Any = NOT_SET,
+        tags: Optional[list[str]] = None,
     ):
         self.path = path
         self.method = method
@@ -80,6 +81,7 @@ class Operation:
         self.description = description
         self.auth = auth
         self.params = params or self._parse_params(path)
+        self.tags = tags
 
     def run(self, *args: Any, **kwargs: Any) -> Any:
         # Run authentication if configured
@@ -310,6 +312,7 @@ class Operation:
             requestBody=self.get_openapi_request_body(field_mapping=field_mapping),
             security=[{self.auth.schema_name: []}] if self.auth else None,
             callbacks=callbacks or None,
+            tags=self.tags
         )
 
     def _parse_path_params(self, path: str) -> list[str]:

@@ -45,6 +45,7 @@ class Router:
         description: str = "",
         params: Optional[list[ModelField]] = None,
         callbacks: Optional[list[Callback]] = None,
+        tags: Optional[list[str]] = None
     ) -> Callable:
         def decorator(func: Callable) -> Callable:
             operation = Operation(
@@ -57,6 +58,7 @@ class Router:
                 description=description,
                 params=params,
                 callbacks=callbacks,
+                tags=tags,
             )
             self.add_operation(operation)
             return func

@@ -1,5 +1,5 @@
 import re
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, List, Dict
 
 from flask import Blueprint, Flask, render_template
 from pydantic.json_schema import GenerateJsonSchema
@@ -23,6 +23,7 @@ class NinjaAPI:
         servers: Optional[list[Server]] = None,
         prefix: str = "",
         docs_url: str = "/docs",
+        openapi_tags: Optional[list[str]] = None
     ):
         swagger_bp = Blueprint(
             "swagger_ui",
@@ -49,6 +50,7 @@ class NinjaAPI:
         self.servers = servers
         self.prefix = prefix
         self.model_definitions: dict[str, Any] = {}
+        self.openapi_tags = openapi_tags
 
     def get(self, path: str, **kwargs: Any) -> Callable:
         return self.router.add_route("GET", self.prefix + path, **kwargs)
@@ -117,6 +119,7 @@ class NinjaAPI:
             ),
             paths=paths,
             servers=self.servers or None,
+            tags=self.openapi_tags,
         )
 
         return schema.model_dump(mode="json", by_alias=True, exclude_none=True)
